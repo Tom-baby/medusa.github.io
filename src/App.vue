@@ -72,7 +72,6 @@ import axios from 'axios'
 import {  getUser, getSearchData} from './queries.js';
 import config from './config'
 import { getUserAccesToken, getUserInfo } from './api'
-import {getAssessTemplateListings } from './search.graphql'
 const defaultData = {
     search: 'vue'
 }
