@@ -3,18 +3,28 @@ const path = require('path');
 const baseConfig = require('./webpack.base.config');
 const merge = require('webpack-merge');
 const webpack = require('webpack');
-var WebpackDevServer = require("webpack-dev-server");
 
 const config = {
   mode: 'development',
-  entry : {
-    index: path.resolve(__dirname, '../src/index.js'),
-    vander: ['vue', 'axios']
-  },
-  output: {
-    path: '/dist',
-    chunkFilename: 'js/[name].js',
-    filename: 'js/[name].js',
+  module: {
+    rules: [
+      {
+        test: /\.postcss$/,
+        use: [
+          'vue-style-loader',
+          {   
+            loader: 'css-loader',
+            options: { importLoaders: 1 },
+          },
+          'postcss-loader',
+          'stylus-loader'
+        ],
+      },
+      {
+        test: /\.css$/,
+        use: ['style-loader','css-loader']
+      }
+    ]
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin()
@@ -24,9 +34,13 @@ const config = {
         '/login/*': {
           target: 'https://github.com',
           changeOrigin: true
+        },
+        '/user/*': {
+            target: 'https://api.github.com',
+            changeOrigin: true
         }
       }
-  }
+  },
 }
 
 module.exports = merge(baseConfig, config);

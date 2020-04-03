@@ -1,13 +1,20 @@
 const path = require('path');
 // const { VueLoaderPlugin } = require('vue-loader');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const StylelintWebpackPlugin = require('stylelint-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-const devMode = process.env.NODE_ENV === 'development';
 const baseConfig = {
+  entry : {
+    index: path.resolve(__dirname, '../src/index.js'),
+    vander: ['vue', 'axios']
+  },
+  output: {
+    path: path.resolve(__dirname, '../dist'),
+    chunkFilename: 'js/[name].[hash].js',
+    filename: 'js/[name].[hash].js',
+  },
   module: {
     rules: [
       {
@@ -28,24 +35,26 @@ const baseConfig = {
           compilerOptions: {
             preserveWhitespace: false,
           },
-        },
+        }, 
       },
       {
-        test: /\.postcss$/,
+            test: /\.(woff|svg|eot|ttf)\??.*$/,
+            loader: 'url-loader'
+     },
+    {
+        test: /\.graphql?$/,
         use: [
-          // devMode ? 'vue-style-loader' : MiniCssExtractPlugin.loader,
-          'vue-style-loader',
-            {
-            loader: 'css-loader',
-            options: { importLoaders: 1 },
-          },
-          'postcss-loader',
-        ],
-      },
-      {
-        test: /\.(eot|svg|ttf|woff|woff2)(\?\S*)?$/,
-        loader: 'file-loader'
-      }
+          {
+            loader: 'webpack-graphql-loader',
+            options: {
+              // validate: true,
+              // schema: "./path/to/schema.json",
+              // removeUnusedFragments: true
+              // etc. See "Loader Options" below
+            }
+          }
+        ]
+    }
     ],
   },
   resolveLoader: {
@@ -56,9 +65,6 @@ const baseConfig = {
       template: path.resolve(__dirname, '../src/index.html')
     }),
     new VueLoaderPlugin(),
-    new MiniCssExtractPlugin({
-      filename: 'css/[name].[contenthash].css',
-    }),
     new FriendlyErrorsWebpackPlugin(),
     new StylelintWebpackPlugin({
       fix: true,

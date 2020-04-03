@@ -4,9 +4,10 @@ import { HttpLink } from 'apollo-link-http'
 import { setContext } from 'apollo-link-context';
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import VueApollo from 'vue-apollo'
+import config from './config'
 
 
-const accessToken = '5826d3f4b4a6f1070b6b361ae85ee9c3b11c84dd';
+const accessToken = sessionStorage.getItem('access_token');
 
 const httpLink = new HttpLink({
   uri: 'https://api.github.com/graphql'
@@ -14,7 +15,7 @@ const httpLink = new HttpLink({
 
 const middlewareLink = setContext(() => ({
   headers: {
-    Authorization: `Bearer ${accessToken}`
+    Authorization: `token ${accessToken}`
   }
 }));
 
