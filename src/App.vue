@@ -118,9 +118,10 @@ import { throttle, debounce } from './throttle'
         },
         getData(){
             // let fn = this.test()
-            throttle(function(){
+            let fn = throttle(function(){
                 console.log('键盘抬起')
-            },3000)()
+            },3000,true)
+            fn.call(this)
         }
     }
   }
@@ -143,11 +144,20 @@ import { throttle, debounce } from './throttle'
 
       input {
         width: 500px;
-        height: 30px;
+        background-color: #fff;
+        border-radius: 4px;
+        border: 1px solid #dcdfe6;
+        box-sizing: border-box;
+        color: #606266;
+        display: inline-block;
+        font-size: inherit;
+        height: 40px;
+        line-height: 1;
+        outline: none;
+        padding: 0 15px;
+        transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
 
-        /* outline-style: none; */
-        border: 1px solid #ccc;
-        border-radius: 3px;
+        /* width: 100%; */
 
         /* border-radius: 5px; */
       }
