@@ -32,19 +32,18 @@
         </div>
     </div>
 </template>
-
 <script>
 import axios from 'axios'
 import {  getSearchData} from './queries.js';
 import config from './config'
 import { getUserAccesToken, getUserInfo } from './api'
-import { throttle, debounce } from './throttle'
+import { throttle } from './throttle'
   export default {
     name:'App',
     data(){
         return {
             code:'',
-            search:'vue',
+            search:'',
             accessToken:'',
             currentPage: 1,
             list:{
@@ -53,6 +52,7 @@ import { throttle, debounce } from './throttle'
             },
             user:'',
             userInfo:{},
+            fn:''
         }
     },
     created(){
@@ -65,23 +65,21 @@ import { throttle, debounce } from './throttle'
         } else {
             window.location.href = this.authoriz_url
         }
-        // console.log('query',this.query)
+        this.submit()
     },
     methods: {
         async init(){
-            this.accessToken = await this.getAccesToken()
-            this.userInfo = await this.getUserInfo()
-            let list = await this.submit()
-            // this.user = getUser()
-         },
-        getAccesToken () {
+            await this.getAccesToken()
+            await this.getUserInfo()
+        },
+        async getAccesToken () {
             let parm = {
                 client_id:config.Client_id,
                 client_secret:config.Client_secret,
                 code:this.code,
             }
             // 获取access_token
-            getUserAccesToken(parm).then(res => {
+            await getUserAccesToken(parm).then(res => {
                 console.log('token',res.access_token)
                 if (res && res.access_token){
                     this.accessToken = res.access_token
@@ -91,37 +89,34 @@ import { throttle, debounce } from './throttle'
                 console.log(err)
             })
         },
-        getUserInfo(){
+        // 当获取code成功后在获取access_token
+        async getUserInfo(){
             let access ={
                 access_token: sessionStorage.getItem('access_token')
             } 
-             // 当获取code成功后在获取access_token
-           getUserInfo(access).then(res => {
+           await getUserInfo(access).then(res => {
                this.userInfo = res
                sessionStorage.setItem('user',res.login)
            }).catch(err => {
                console.log(err)
            })
         },
-        submit(){
-            let parm = this.search
-            getSearchData(parm).then((res) => {
-                console.log(res);
-                if (res && res.data && res.data.search) {
-                    this.list.data = res.data.search.nodes
-                } else {
-                    this.list.data = []
-                }
-            }).catch((err) => {
-                console.log(err);
-            });
+        submit() {
+            this.fn = throttle(function(){
+                let parm = this.search
+                getSearchData(parm).then((res) => {
+                    if (res && res.data && res.data.search) {
+                        this.list.data = res.data.search.nodes
+                    } else {
+                        this.list.data = []
+                    }
+                }).catch((err) => {
+                    console.log(err);
+                });
+            },1000, true)
         },
         getData(){
-            // let fn = this.test()
-            let fn = throttle(function(){
-                console.log('键盘抬起')
-            },3000,true)
-            fn.call(this)
+            this.fn.call(this)
         }
     }
   }
@@ -143,7 +138,7 @@ import { throttle, debounce } from './throttle'
       text-align: center;
 
       input {
-        width: 500px;
+        width: 400px;
         background-color: #fff;
         border-radius: 4px;
         border: 1px solid #dcdfe6;
@@ -156,10 +151,11 @@ import { throttle, debounce } from './throttle'
         outline: none;
         padding: 0 15px;
         transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+      }
 
-        /* width: 100%; */
-
-        /* border-radius: 5px; */
+      ::-webkit-input-placeholder {
+        color: #999;
+        font-style: 12px;
       }
     }
 
@@ -180,16 +176,16 @@ import { throttle, debounce } from './throttle'
       }
 
       table thead th {
-        background-color: #cce8eb;
+        background-color: #f5f7fa;
         width: 100px;
       }
 
       table tr:nth-child(odd) {
-        background: #fff;
+        background: #f5f7fa;
       }
 
       table tr:nth-child(even) {
-        background: #f5fafa;
+        background: #fff;
       }
     }
   }

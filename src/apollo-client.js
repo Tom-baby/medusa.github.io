@@ -4,7 +4,6 @@ import { HttpLink } from 'apollo-link-http'
 import { setContext } from 'apollo-link-context';
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import VueApollo from 'vue-apollo'
-import config from './config'
 
 const httpLink = new HttpLink({
   uri: 'https://api.github.com/graphql'

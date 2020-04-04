@@ -23,6 +23,3 @@ export function getSearchData(query) {
         }`,
     });
 }
-export default {
-    getSearchData,
-}
