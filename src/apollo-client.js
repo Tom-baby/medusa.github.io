@@ -6,16 +6,13 @@ import { InMemoryCache } from 'apollo-cache-inmemory'
 import VueApollo from 'vue-apollo'
 import config from './config'
 
-
-const accessToken = sessionStorage.getItem('access_token');
-
 const httpLink = new HttpLink({
   uri: 'https://api.github.com/graphql'
 });
 
 const middlewareLink = setContext(() => ({
   headers: {
-    Authorization: `token ${accessToken}`
+    Authorization: `token ${sessionStorage.getItem('access_token')}`
   }
 }));
 
@@ -29,6 +26,6 @@ const apolloClient = new ApolloClient({
 
 Vue.use(VueApollo);
 
-export { apolloClient };
+export default apolloClient 
 
 

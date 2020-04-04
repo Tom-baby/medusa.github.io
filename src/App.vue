@@ -1,90 +1,57 @@
 <template>
     <div  id="app">
-        <el-row type="flex" justify="center">
-            <el-col :span="24">
-                <div class="bg-purple-light">
-                    <div class="bg-purple-light-input">
-                        <el-input v-model="search" placeholder="请输入内容">
-                            <el-button slot="append" icon="el-icon-search" @click="submit"></el-button>
-                        </el-input>
-                    </div>
-                    <ApolloQuery :query="list">
-                        <template slot-scope="{ result: { data } }">
-                            <el-table
-                                v-if="data"
-                                :data="data.search.nodes"
-                                border
-                                style="width: 100%;">
-                                <el-table-column
-                                    width="100px"
-                                    prop="__typename"
-                                    label="typeName">
-                                </el-table-column>
-                                <el-table-column
-                                    prop="id"
-                                    label="id">
-                                </el-table-column>
-                                 <el-table-column
-                                    prop="title"
-                                    label="title">
-                                </el-table-column>
-                                <el-table-column
-                                    label="author">
-                                    <template slot-scope="scope">
-                                        <span>{{scope.row.author.login}}</span>
-                                    </template>
-                                </el-table-column>
-                                <el-table-column
-                                    label="url">
-                                    <template slot-scope="scope">
-                                        <a :href="scope.row.url">{{scope.row.url}}</a>
-                                    </template>
-                                </el-table-column>
-                                <el-table-column
-                                    prop="createdAt"
-                                    label="createdAt">
-                                </el-table-column>
-                            </el-table>
-                            <!-- <div class="block">
-                            <el-pagination
-                                @size-change="handleSizeChange"
-                                @current-change="handleCurrentChange"
-                                :current-page="currentPage"
-                                :page-sizes="[100, 200, 300, 400]"
-                                :page-size="100"
-                                layout="total, sizes, prev, pager, next, jumper"
-                                :total="data.search.issueCount">
-                            </el-pagination>
-                        </div> -->
-                        </template>    
-                    </ApolloQuery>
+        <div class="content">
+            <div class="content-input">
+                <input type="text" v-model="search" @keyup="getData" placeholder="请输入搜索内容">
+            </div>
+            <div class="content-table">
+                <table v-if="list.data.length > 0">
+                    <thead>
+                        <tr>
+                            <th>__typename</th>
+                            <th>id</th>
+                            <th>title</th>
+                            <th>login</th>
+                            <th>url</th>
+                            <th>createdAt</th>
+                        </tr>
+                    </thead>
+                    <tr  v-for=" (item,index) in list.data" :key="index">
+                        <td>{{ item.__typename }}</td>
+                        <td>{{ item.id ? item.id : '' }}</td>
+                        <td>{{ item.title ? item.title : '' }}</td>
+                        <td>{{ item.author ? item.author.login : ''}}</td>
+                        <td>{{ item.url ? item.url : '' }}</td>
+                        <td>{{ item.createdAt ? item.createdAt : ''}}</td>
+                    </tr>
+                </table>
+                <div v-else>
+                    暂无匹配数据
                 </div>
-            </el-col>
-            <!-- <el-col :span="2"><div class="grid-content bg-purple"></div></el-col> -->
-        </el-row>
-        
+            </div>
+        </div>
     </div>
 </template>
 
 <script>
-// import gql from 'graphql-tag'
 import axios from 'axios'
 import {  getSearchData} from './queries.js';
 import config from './config'
 import { getUserAccesToken, getUserInfo } from './api'
-const defaultData = {
-    search: 'vue'
-}
+import { throttle, debounce } from './throttle'
   export default {
-    name:'app',
+    name:'App',
     data(){
         return {
             code:'',
-            search:'',
+            search:'vue',
             accessToken:'',
             currentPage: 1,
+            list:{
+                data:[],
+                total:0
+            },
             user:'',
-            list: getSearchData(defaultData.search),
             userInfo:{},
         }
     },
@@ -104,7 +71,7 @@ const defaultData = {
         async init(){
             this.accessToken = await this.getAccesToken()
             this.userInfo = await this.getUserInfo()
-            // this.list = await this.submit()
+            let list = await this.submit()
             // this.user = getUser()
          },
         getAccesToken () {
@@ -137,26 +104,84 @@ const defaultData = {
            })
         },
         submit(){
-            let user = sessionStorage.getItem('user')
-            console.log('$apolloData',this.$apolloData)
-            this.list = getSearchData(this.search)
+            let parm = this.search
+            getSearchData(parm).then((res) => {
+                console.log(res);
+                if (res && res.data && res.data.search) {
+                    this.list.data = res.data.search.nodes
+                } else {
+                    this.list.data = []
+                }
+            }).catch((err) => {
+                console.log(err);
+            });
         },
-        handleSizeChange(val) {
-            console.log(`每页 ${val} 条`);
-        },
-        handleCurrentChange(val) {
-            console.log(`当前页: ${val}`);
-        } 
+        getData(){
+            // let fn = this.test()
+            throttle(function(){
+                console.log('键盘抬起')
+            },3000)()
+        }
     }
   }
 </script>
 
 <style lang="postcss" scoped>
-.app {
+#app {
+  padding: 0;
+  margin: 0;
   width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
-  .bg-purple-light-input {
-    width: 500px;
+  .content {
+    .content-input {
+      width: 500px;
+      margin: 0 auto;
+      text-align: center;
+
+      input {
+        width: 500px;
+        height: 30px;
+
+        /* outline-style: none; */
+        border: 1px solid #ccc;
+        border-radius: 3px;
+
+        /* border-radius: 5px; */
+      }
+    }
+
+    .content-table {
+      /* width: 900px; */
+      margin: 40px;
+
+      table {
+        border-collapse: collapse;
+        margin: 0 auto;
+        text-align: center;
+      }
+
+      table td, table th {
+        border: 1px solid #cad9ea;
+        color: #666;
+        height: 30px;
+      }
+
+      table thead th {
+        background-color: #cce8eb;
+        width: 100px;
+      }
+
+      table tr:nth-child(odd) {
+        background: #fff;
+      }
+
+      table tr:nth-child(even) {
+        background: #f5fafa;
+      }
+    }
   }
 }
 </style>

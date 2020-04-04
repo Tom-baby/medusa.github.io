@@ -1,24 +1,28 @@
 import gql from 'graphql-tag';
-export const getSearchData =(query) => gql`
-query {
-    search(type: ISSUE, first: 10, query: "${query}") {
-        nodes {
-            ... on Issue {
-                id
-                author {
-                login
+import apolloClient from './apollo-client';
+
+
+export function getSearchData(query) {
+    return apolloClient.query({
+        query: gql`
+        query {
+            search(type: ISSUE, first: 10, query: "${query}") {
+                nodes {
+                    ... on Issue {
+                        id
+                        author {
+                            login
+                        }
+                        createdAt
+                        url
+                        title
+                    }
                 }
-                createdAt
-                url
-                title
-            }
-        }
-        pageInfo {
-            endCursor
-            startCursor
-            hasNextPage
-            hasPreviousPage
-        }
-        issueCount
-    }    
-}`
+                issueCount
+            }    
+        }`,
+    });
+}
+export default {
+    getSearchData,
+}

@@ -1,0 +1,57 @@
+
+#app[data-v-7ba5bd90] {
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center
+}
+#app .content[data-v-7ba5bd90] {
+}
+#app .content .content-input[data-v-7ba5bd90] {
+      width: 500px;
+      margin: 0 auto;
+      text-align: center
+}
+#app .content .content-input input[data-v-7ba5bd90] {
+        width: 500px;
+        height: 30px;
+
+        /* outline-style: none; */
+        border: 1px solid #ccc;
+        border-radius: 3px;
+
+        /* border-radius: 5px; */
+}
+#app .content .content-table[data-v-7ba5bd90] {
+      /* width: 900px; */
+      margin: 40px
+}
+#app .content .content-table table[data-v-7ba5bd90] {
+        border-collapse: collapse;
+        margin: 0 auto;
+        text-align: center;
+}
+#app .content .content-table table td[data-v-7ba5bd90], #app .content .content-table table th[data-v-7ba5bd90] {
+        border: 1px solid #cad9ea;
+        color: #666;
+        height: 30px;
+}
+#app .content .content-table table thead th[data-v-7ba5bd90] {
+        background-color: #cce8eb;
+        width: 100px;
+}
+#app .content .content-table table tr[data-v-7ba5bd90]:nth-child(odd) {
+        background: #fff;
+}
+#app .content .content-table table tr[data-v-7ba5bd90]:nth-child(even) {
+        background: #f5fafa;
+}
+
