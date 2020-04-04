@@ -41,21 +41,7 @@ const baseConfig = {
             test: /\.(woff|svg|eot|ttf)\??.*$/,
             loader: 'url-loader'
      },
-    {
-        test: /\.graphql?$/,
-        use: [
-          {
-            loader: 'webpack-graphql-loader',
-            options: {
-              // validate: true,
-              // schema: "./path/to/schema.json",
-              // removeUnusedFragments: true
-              // etc. See "Loader Options" below
-            }
-          }
-        ]
-    }
-    ],
+    ]
   },
   resolveLoader: {
     modules: ['node_modules', path.resolve(__dirname, '../node_modules')],

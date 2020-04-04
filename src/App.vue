@@ -69,7 +69,7 @@
 <script>
 // import gql from 'graphql-tag'
 import axios from 'axios'
-import {  getUser, getSearchData} from './queries.js';
+import {  getSearchData} from './queries.js';
 import config from './config'
 import { getUserAccesToken, getUserInfo } from './api'
 const defaultData = {
@@ -86,7 +86,6 @@ const defaultData = {
             user:'',
             list: getSearchData(defaultData.search),
             userInfo:{},
-            query: getUser()
         }
     },
     created(){
@@ -156,7 +155,7 @@ const defaultData = {
 .app {
   width: 100%;
 
-  & .bg-purple-light-input {
+  .bg-purple-light-input {
     width: 500px;
   }
 }
